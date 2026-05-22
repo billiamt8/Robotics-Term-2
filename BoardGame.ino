@@ -18,8 +18,8 @@ int RedValue = 0;
 int GreenValue = 0;
 
 const int btnPin = (9);
-bool buttonState = LOW;
-bool lastButtonState = LOW; 
+bool buttonState = HIGH;
+bool lastButtonState = HIGH; 
 bool buttonToggle = false;
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 100;
@@ -29,7 +29,7 @@ long randNumber;
 void setup()
   {
     Serial.begin(9600);
-    lcd.init();                      // initialize the lcd 
+    lcd.begin();                      // initialize the lcd 
     lcd.backlight();
 
     
@@ -51,38 +51,38 @@ void setup()
     randomSeed(analogRead(0));
 
     digitalWrite(s0,HIGH);  //Putting S0/S1 on HIGH/HIGH levels means the output frequency scaling is at 100%
-    digitalWrite(s1,LOW);  //LOW/LOW is off HIGH/LOW is 20% and LOW/HIGH is 2%
+    digitalWrite(s1,HIGH);  //LOW/LOW is off HIGH/LOW is 20% and LOW/HIGH is 2%
   }
 
   void loop()
-  { 
+  {       
     LCD();
     ColourSensor();
-    //ButtonPressed();
+    ButtonPressed();
     PrintRand();
   }
 
   void ColourSensor()
   {  
     GetColours();
-    analogWrite(LED1R,map(RedValue,11,32,255,0));
-    analogWrite(LED1G,map(GreenValue,15,40,255,0));
-    analogWrite(LED2R,map(RedValue,11,32,255,0));
-    analogWrite(LED2G,map(GreenValue,18,40,255,0));    
+    analogWrite(LED1R,map(RedValue,25,74,255,0));
+    analogWrite(LED1G,map(GreenValue,36,98,255,0));
+    analogWrite(LED2R,map(RedValue,25,74,255,0));
+    analogWrite(LED2G,map(GreenValue,36,98,255,0));    
 
   }
 
   void GetColours(){
     RedValue = GetRed();
     //RedValue = map(Red,)
-    delay(200);
+    delay(100);
     GreenValue = GetGreen();
-    delay(200);
+    delay(100);
 
-    // Serial.print("red value = ");
-    // Serial.print(RedValue);
-    // Serial.print("green value = ");
-    // Serial.println(GreenValue);
+    Serial.print("red value = ");
+    Serial.print(RedValue);
+    Serial.print("green value = ");
+    Serial.println(GreenValue);
   }
   int GetRed() 
     {
@@ -116,7 +116,7 @@ void setup()
       {
         lastDebounceTime = millis();  // reset timer
         lastButtonState = buttonState;  // update both states
-        if (buttonState == HIGH) {  // if button pressed
+        if (buttonState == LOW) {  // if button pressed
           Serial.println("pressed");
           buttonToggle = !buttonToggle;  // toggle on/off
         }
@@ -125,12 +125,15 @@ void setup()
   }
 
   void PrintRand() 
-  { 
-    ButtonPressed();
+  {
+    lcd.setCursor(0,1);
     if (buttonToggle == true) {
       randNumber = random(1, 7);
-      lcd.setCursor(0,1);
+
       lcd.print(String("Number is ") + String(randNumber));
+    } else (buttonToggle == false); {
+      lcd.setCursor(12, 1);
+      lcd.print("...");
     }
   }
 
